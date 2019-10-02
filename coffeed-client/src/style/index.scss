@@ -1,0 +1,53 @@
+@import '~sanitize.css';
+@import '~sanitize.css/forms.css';
+@import '~sanitize.css/typography.css';
+
+@import "./variables.scss";
+
+body {
+  background-color: $white;
+  color: $black;
+
+  header {
+    nav {
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: $black;
+
+        li {
+          float: left;
+
+          a {
+            display: block;
+            color: $white;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+
+            &:hover {
+              background-color: $primary;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  main {
+    display: flex;
+    justify-content: center;
+
+    div.main-view {
+      max-width: 1440px;
+      display: flex;
+    }
+  }
+
+  footer {
+    background-color: $black;
+    color: $white;
+  }
+}

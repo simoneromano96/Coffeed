@@ -1,3 +1,21 @@
 <template>
-  <h1>${message}</h1>
+  <require from="./style/index.scss"></require>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="">Homepage</a></li>
+        <li><a href="">About</a></li>
+        <li><a href="">Shop</a></li>
+        <li><a href="">Contact us</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main>
+    <div class="main-view">
+      <router-view />
+    </div>
+  </main>
+  <footer>
+    Footer
+  </footer>
 </template>
