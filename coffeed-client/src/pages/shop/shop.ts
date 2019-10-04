@@ -4,7 +4,7 @@ import { bindable } from "aurelia-framework";
 export class Shop {
   @bindable
   coffees: Coffee[] = [
-    new Coffee("Moka", 2),
+    new Coffee("Mokaccino", 2),
     new Coffee("Cappuccino", 1.75),
     new Coffee("Espresso", 1.5),
     new Coffee("Macchiato", 2),
