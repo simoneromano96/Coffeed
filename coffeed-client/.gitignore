@@ -39,3 +39,6 @@ node_modules
 # Remove lock files
 *.lock
 *lock.yaml
+
+# Logs
+*.log

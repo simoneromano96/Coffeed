@@ -1,3 +1,15 @@
-<template>
-  ${coffee.name} --- ${coffee.price}
+<template class="card">
+  <require from="./coffee-card.scss"></require>
+  <span class="name">
+    ${coffee.name}
+  </span>
+  <div class="image-wrap" click.trigger="getDetails()">
+    <img src.bind="coffee.getImage()" alt="Coffee image" class="image">
+    <div class="details">
+      ${coffee.getDetails()}
+    </div>
+  </div>
+  <span class="price">
+    ${coffee.price} €
+  </span>
 </template>

@@ -1,8 +1,11 @@
 <template>
+  <require from="./shop.scss"></require>
   <require from="../../components/coffee-card/coffee-card" as coffee-card> </require>
   <h1>Try and taste one of our coffees </h1>
-  
-  <div repeat.for="coffee of coffees">
-    <coffee-card coffee.bind="coffee"></coffee-card>
+
+  <div class="coffee-list">
+    <template repeat.for="coffee of coffees">
+      <coffee-card coffee.bind="coffee" />
+    </template>
   </div>
 </template>

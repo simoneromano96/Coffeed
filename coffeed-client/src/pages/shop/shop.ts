@@ -7,8 +7,8 @@ export class Shop {
     new Coffee("Mokaccino", 2),
     new Coffee("Cappuccino", 1.75),
     new Coffee("Espresso", 1.5),
-    new Coffee("Macchiato", 2),
-    new Coffee("American", 9.99),
-    new Coffee("CafèLatte", 2.25),
+    // new Coffee("Macchiato", 2),
+    // new Coffee("American", 9.99),
+    // new Coffee("CafèLatte", 2.25),
   ];
 }
