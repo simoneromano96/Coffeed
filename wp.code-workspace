@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "coffeed-client"
+		},
+		{
+			"path": "coffeed-server"
+		}
+	],
+	"settings": {}
+}

@@ -4,7 +4,7 @@ import { Coffee } from "classes/coffee";
 export class CoffeeCard {
   @bindable coffee: Coffee;
 
-  getDetails = () => {
-    return this.coffee.getDetails();
+  fetchDetails = () => {
+    this.coffee.fetchDetails();
   }
 }

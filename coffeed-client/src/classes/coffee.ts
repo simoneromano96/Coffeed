@@ -1,27 +1,34 @@
-// GraphQL Client
-// https://github.com/prisma-labs/graphql-request
-
-class Details {
-  constructor() {}
-}
+import { BACKEND_URL } from "./configuration"
+import { client } from "./graphClient";
 
 export class Coffee {
-  details?: object
+  public details?: string
 
-  constructor(private id: String, private name: string, private price: number) {}
+  /**
+   * A representation of a Coffee
+   * @param id The coffee's UUID
+   * @param name The coffee name
+   * @param price The coffee's price
+   * @param imageUrl Where to retrieve the coffee image
+   */
+  constructor(public id: string, public name: string, public price: number, public imageUrl: string) {
+    this.imageUrl = `${BACKEND_URL}${imageUrl}`
+  }
 
-  // API actions
-  fetchDetails = (): Details => ({ a: "a" })
+  fetchDetails = async () => {
+    if (!this.details) {
+      try {
+        const query = `{
+          coffee(id: "${this.id}") {
+            details
+          }
+        }`
 
-  // Getters
-  getId = () => this.id
-  getName = () => this.name
-  getPrice = () => this.price
-  getDetails = () => (this.details ? this.details : "Please buy me")
-  getImage = () => require(`../assets/images/shop/${this.getName().toLowerCase()}.jpg`)
-
-  // Setters
-  setName = (name: string) => (this.name = name)
-  setPrice = (price: number) => (this.price = price)
-  setDetails = (details: object) => (this.details = details)
+        let res: { coffee: { details: string } } = await client.request(query)
+        this.details = res.coffee.details
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
 }

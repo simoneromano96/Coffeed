@@ -1,0 +1,7 @@
+type Coffee {
+    id: ID!
+    name: String!
+    price: Float!
+    imageUrl: String!
+    details: String
+}

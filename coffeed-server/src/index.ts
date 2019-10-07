@@ -31,9 +31,9 @@ const typeDefs = `
 `
 
 const coffees = [
-  new Coffee("Mokaccino", 2, "/images/mokaccino.jpg"),
-  new Coffee("Cappuccino", 1.75, "/images/cappuccino.jpg"),
-  new Coffee("Espresso", 1.5, "/images/espresso.jpg"),
+  new Coffee("Mocaccino", 2, "images/mocaccino.jpg", "A caffè mocha, also called mocaccino, is a chocolate-flavored variant of a caffè latte."),
+  new Coffee("Cappuccino", 1.75, "images/cappuccino.jpg"),
+  new Coffee("Espresso", 1.5, "images/espresso.jpg"),
 ];
 
 const resolvers = {

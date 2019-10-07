@@ -3,13 +3,16 @@
   <span class="name">
     ${coffee.name}
   </span>
-  <div class="image-wrap" click.trigger="getDetails()">
-    <img src.bind="coffee.getImage()" alt="Coffee image" class="image">
+  <div class="image-wrap" click.trigger="fetchDetails()">
+    <img src.bind="coffee.imageUrl" alt="Coffee image" class="image">
     <div class="details">
-      ${coffee.getDetails()}
+      ${coffee.details}
     </div>
   </div>
   <span class="price">
     ${coffee.price} €
   </span>
+  <p>
+    ${JSON.stringify(coffee)}
+  </p>
 </template>
