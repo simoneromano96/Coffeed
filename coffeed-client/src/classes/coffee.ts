@@ -16,6 +16,7 @@ export class Coffee {
   }
 
   fetchDetails = async () => {
+    // Ask for details only once
     if (!this.details) {
       try {
         const query = `{
@@ -24,8 +25,9 @@ export class Coffee {
           }
         }`
 
-        let res: { coffee: { details: string } } = await client.request(query)
-        this.details = res.coffee.details
+        const res: { coffee: { details: string } } = await client.request(query)
+        const details = res.coffee.details
+        this.details = details && details.length > 0 ? details : "No description available 😥"
       } catch (error) {
         console.log(error)
       }

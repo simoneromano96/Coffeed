@@ -2,11 +2,21 @@
 @import '~sanitize.css/forms.css';
 @import '~sanitize.css/typography.css';
 
+@import "./dependencies.scss";
 @import "./variables.scss";
 
 body {
+  font-family: $body-font-family;
+  font-size: $body-font-size;
+  font-weight: $body-font-weight;
+
   background-color: $white;
   color: $black;
+
+  h1,h2,h3,h4,h5,h6 {
+    font-family: $header-font-family;
+    font-weight: $header-font-weight;
+  }
 
   header {
     background-color: $black;

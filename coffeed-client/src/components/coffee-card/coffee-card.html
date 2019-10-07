@@ -4,15 +4,17 @@
     ${coffee.name}
   </span>
   <div class="image-wrap" click.trigger="fetchDetails()">
-    <img src.bind="coffee.imageUrl" alt="Coffee image" class="image">
+    <img src.bind="coffee.imageUrl" alt="Coffee image" class="image" />
     <div class="details">
-      ${coffee.details}
+      <div class="opaque" class.bind="coffee.details === undefined ? 'show' : 'hide'">
+        Click to get my details!
+      </div>
+      <div class="animate" class.bind="coffee.details === undefined ? 'hide' : 'show'">
+        ${coffee.details}
+      </div>
     </div>
   </div>
   <span class="price">
     ${coffee.price} €
   </span>
-  <p>
-    ${JSON.stringify(coffee)}
-  </p>
 </template>
