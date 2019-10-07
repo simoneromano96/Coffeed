@@ -1,10 +1,7 @@
-/*
-import myAddFunction, { subtract } from './math'
-
-console.log(myAddFunction(1, -2))
-console.log(subtract(10, 2))
-*/
 import { GraphQLServer } from "graphql-yoga"
+import * as express from "express";
+
+import { Coffee } from "./models/Coffee/coffee";
 
 /**
  * GraphQL Scalar Types:
@@ -19,28 +16,30 @@ import { GraphQLServer } from "graphql-yoga"
 // Type definitions / Schema
 
 const typeDefs = `
-  type User {
-    id: ID!,
-    name: String!,
-    email: String!,
-    age: Int
+  type Coffee {
+    id: ID!
+    name: String!
+    price: Float!
+    imageUrl: String!
+    details: String
   }
 
   type Query {
-    me: User
-    greeting(name: String): String
+    coffees: [Coffee!]!
+    coffee(id: String!): Coffee
   },
 `
 
+const coffees = [
+  new Coffee("Mokaccino", 2, "/images/mokaccino.jpg"),
+  new Coffee("Cappuccino", 1.75, "/images/cappuccino.jpg"),
+  new Coffee("Espresso", 1.5, "/images/espresso.jpg"),
+];
+
 const resolvers = {
   Query: {
-    me: () => ({
-      id: "abc123",
-      name: "Simone Romano",
-      email: "simone@simoneromano.eu",
-      age: null,
-    }),
-    greeting: (parent, { name }, context, info) => `Hello, ${name || "anonymous"}`
+    coffees: (): Coffee[] => coffees,
+    coffee: (parent, { id }): Coffee => coffees.find(coffee => coffee.id === id)
   },
 }
 
@@ -52,5 +51,6 @@ const options = {
 }
 
 const server = new GraphQLServer({ typeDefs, resolvers })
+server.express.use('/', express.static(__dirname + '/public'));
 
 server.start(options, ({ port }) => console.log(`Server started, listening on port ${port} for incoming requests.`))
