@@ -32,7 +32,7 @@ const typeDefs = `
 
 const coffees = [
   new Coffee("Mocaccino", 2, "images/mocaccino.jpg", "A caffè mocha, also called mocaccino, is a chocolate-flavored variant of a caffè latte."),
-  new Coffee("Cappuccino", 1.75, "images/cappuccino.jpg"),
+  new Coffee("Cappuccino", 1.75, "images/cappuccino.jpg", "A cappuccino is an espresso-based coffee drink that originated in Italy, and is traditionally prepared with steamed milk foam (microfoam).Variations of the drink involve the use of cream instead of milk, and flavoring with cinnamon or chocolate powder."),
   new Coffee("Espresso", 1.5, "images/espresso.jpg"),
 ];
 
