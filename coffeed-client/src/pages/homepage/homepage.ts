@@ -1,3 +1,1 @@
-export class Homepage {
-  
-}
+export class Homepage {}

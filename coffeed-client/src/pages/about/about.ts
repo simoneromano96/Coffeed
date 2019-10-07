@@ -1,2 +1,1 @@
-export class Homepage {
-}
+export class About {}

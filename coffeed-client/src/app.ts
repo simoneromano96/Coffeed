@@ -11,6 +11,7 @@ export class App {
       { route: "", name: "homepage", moduleId: PLATFORM.moduleName("./pages/homepage/homepage") },
       { route: "about", name: "about", moduleId: PLATFORM.moduleName("./pages/about/about") },
       { route: "shop", name: "shop", moduleId: PLATFORM.moduleName("./pages/shop/shop") },
-    ]);
+      { route: "blog", name: "blog", moduleId: PLATFORM.moduleName("./pages/blog/blog") },
+    ])
   }
 }
