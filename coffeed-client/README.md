@@ -1,67 +1,52 @@
-# `coffeed-client`
+This project was bootstrapped with [Create Solid](https://github.com/ryansolid/create-solid).
 
-This project is bootstrapped by [aurelia-cli](https://github.com/aurelia/cli).
+## Available Scripts
 
-For more information, go to https://aurelia.io/docs/cli/webpack
+In the project directory, you can run:
 
-## Run dev app
+### `npm start`
 
-Run `npm start`, then open `http://localhost:8080`
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-You can change the standard webpack configurations from CLI easily with something like this: `npm start -- --open --port 8888`. However, it is better to change the respective npm scripts or `webpack.config.js` with these options, as per your need.
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console.
 
-To enable Webpack Bundle Analyzer, do `npm run analyze` (production build).
+### `npm test`
 
-To enable hot module reload, do `npm start -- --hmr`.
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-To change dev server port, do `npm start -- --port 8888`.
+### `npm run build`
 
-To change dev server host, do `npm start -- --host 127.0.0.1`
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-**PS:** You could mix all the flags as well, `npm start -- --host 127.0.0.1 --port 7070 --open --hmr`
+The build is minified and the filenames include the hashes.<br>
+Your app is ready to be deployed!
 
-For long time aurelia-cli user, you can still use `au run` with those arguments like `au run --env prod --open --hmr`. But `au run` now simply executes `npm start` command.
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-## Build for production
+### Code Splitting
 
-Run `npm run build`, or the old way `au build --env prod`.
+This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
 
-## Unit tests
+### Analyzing the Bundle Size
 
-Run `au test` (or `au karma`).
+This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
 
-To run in watch mode, `au test --watch` or `au karma --watch`.
+### Making a Progressive Web App
 
-## Integration (e2e) tests
+This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
 
-You need the app running for integration test.
+### Advanced Configuration
 
-First, run `au run` and keep it running.
+This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
 
-Then run `au protractor`.
+### Deployment
 
-To perform a test-run and reports the results, do `au protractor --run`.
+This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
 
-To ask the `protractor` to start the application first and then start testing: `au protractor --start`
+### `npm run build` fails to minify
 
-The two following flags are useful when using `--start` flag:
- * To change dev server port, do `au protractor --start --port 8888`.
- * To change dev server host, do `au protractor --start --host 127.0.0.1`
-
-
-**PS:** It is also possible to mix the flags `au protractor --run --start --port 7070 --host 127.0.0.1`
-
-
-## Build for Docker
-
-This is as simple as running a command:
-
-`yarn docker:build` or `npm run docker:build`
-
-if you want to bring up an instance on your machine run:
-
-`yarn docker:start` or `npm run docker:build`
-
-to stop the previously started instance:
-
-`yarn docker:stop` or `npm run docker:stop`
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
