@@ -11,7 +11,7 @@
         Click to get my details!
       </div>
       <div class="loading">
-        <coffee-loader></coffee-loader>
+        <coffee-loader name="getName()" loading-percentage.bind="loadingPercentage"></coffee-loader>
       </div>
       <div class="animate" class.bind="coffee.details === undefined ? 'hide' : 'show'">
         ${coffee.details}
