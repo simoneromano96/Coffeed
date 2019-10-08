@@ -1,4 +1,5 @@
 <template class="card">
+  <require from="../../components/coffee-loader/coffee-loader"></require>
   <require from="./coffee-card.scss"></require>
   <span class="name">
     ${coffee.name}
@@ -8,6 +9,9 @@
     <div class="details">
       <div class="opaque" class.bind="coffee.details === undefined ? 'show' : 'hide'">
         Click to get my details!
+      </div>
+      <div class="loading">
+        <coffee-loader></coffee-loader>
       </div>
       <div class="animate" class.bind="coffee.details === undefined ? 'hide' : 'show'">
         ${coffee.details}

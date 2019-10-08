@@ -40,6 +40,9 @@
       transition: opacity 0.25s;
       overflow: hidden;
 
+      .loading {
+      }
+
       .opaque {
         transition: opacity 0.5s;
         padding: 1em;
