@@ -21,6 +21,7 @@
   },
   "include": [
     "src",
-    "src/declarations/svg.d.ts"
+    "src/declarations/svg.d.ts",
+    "src/declarations/sass.d.ts"
   ]
 }

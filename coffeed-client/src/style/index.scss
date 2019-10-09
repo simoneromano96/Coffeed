@@ -14,50 +14,6 @@ body {
     font-weight: $header-font-weight;
   }
 
-  header {
-    background-color: $black;
-    display: flex;
-    flex-flow: column;
-
-    img {
-      height: 10rem;
-      width: auto;
-    }
-
-    nav {
-      display: flex;
-      justify-content: center;
-      margin-top: 0.25rem;
-      margin-bottom: 1rem;
-
-      ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-
-        li {
-          float: left;
-
-          a {
-            transition: all 0.5s;
-            display: block;
-            color: $white;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            border-bottom: 2px double $white;
-
-            &:hover {
-              background-color: $primary;
-              border-bottom: 2px double $tertiary;
-            }
-          }
-        }
-      }
-    }
-  }
-
   main {
     display: flex;
     justify-content: center;
