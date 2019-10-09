@@ -1,5 +1,5 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg"
+import "./App.css"
 
 function App() {
   return (
@@ -9,17 +9,12 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
-        <a
-          class="App-link"
-          href="https://github.com/ryansolid/solid"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
+        <a class="App-link" href="https://github.com/ryansolid/solid" target="_blank" rel="noopener noreferrer">
           Learn Solid
         </a>
       </header>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
