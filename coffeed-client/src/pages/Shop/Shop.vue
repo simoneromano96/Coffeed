@@ -1,19 +1,12 @@
 <template>
   <div>
     <h1>Try and taste one of our coffees</h1>
-
-    <div v-for="(coffee, index) in coffees" :key="coffee.id">
-      <p>{{index}}</p>
+    <div class="coffee-list">
+      <template v-for="coffee in coffees">
+        <coffee-card :key="coffee.id" :coffee="coffee" />
+      </template>
     </div>
   </div>
-
-  <!--
-  <div class="coffee-list">
-    <template repeat.for="coffee of coffees">
-      <coffee-card coffee.bind="coffee" />
-    </template>
-  </div>
-  -->
 </template>
 
 <style lang="scss" scoped>
@@ -31,16 +24,21 @@ h1 {
 import { Component, Vue } from "vue-property-decorator"
 import { client } from "../../classes/graphClient"
 import { Coffee } from "../../classes/coffee"
+import CoffeeCard from "../../components/CoffeeCard/CoffeeCard.vue"
 
-@Component
+const components = { CoffeeCard }
+
+@Component({ components })
 export default class Shop extends Vue {
-  public coffees: Coffee[]
+  public coffees: Coffee[] = []
 
-  mounted () {
+  @Component CoffeeCard
+
+  mounted() {
     this.fetchCoffees()
   }
 
-  fetchCoffees = async () => {
+  async fetchCoffees() {
     try {
       const query = `
       {
@@ -52,14 +50,8 @@ export default class Shop extends Vue {
         }
       }`
 
-      // let res: { coffees: Coffee[] } = await client.request(query)
-      // console.log(res);
-      // this.coffees = res.coffees.map(coffee => new Coffee(coffee.id, coffee.name, coffee.price, coffee.imageUrl))
-      // console.log(this.coffees)
-      client.request(query).then((res: {coffees: Coffee[]}) => {
-        // TODO!
-        res.coffees.map(coffee => new Coffee(coffee.id, coffee.name, coffee.price, coffee.imageUrl))
-      })
+      let res: { coffees: Coffee[] } = await client.request(query)
+      this.coffees = res.coffees.map(coffee => new Coffee(coffee.id, coffee.name, coffee.price, coffee.imageUrl))
     } catch (error) {
       console.log(error)
     }
