@@ -1,6 +1,8 @@
 dependencies:
   core-js: 2.6.9
+  graphql-request: 1.8.2
   register-service-worker: 1.6.2
+  sanitize.css: 11.0.0
   vue: 2.6.10
   vue-class-component: 7.1.0
   vue-property-decorator: 8.2.2
@@ -3047,6 +3049,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-MJG9liiZ+ogc4TzUwuvbER1JRdgvUFSB5+VR/g5h82fGaIRWMWddtKBHi7/sVhfjQZ6SehlyhvQYrcYkaUIpLg==
+  /cross-fetch/2.2.2:
+    dependencies:
+      node-fetch: 2.1.2
+      whatwg-fetch: 2.0.4
+    dev: false
+    resolution:
+      integrity: sha1-pH/09/xxLauo9qaVoRyUhEDUVyM=
   /cross-spawn/3.0.1:
     dependencies:
       lru-cache: 4.1.5
@@ -5073,6 +5082,12 @@ packages:
     dev: true
     resolution:
       integrity: sha1-TK+tdrxi8C+gObL5Tpo906ORpyU=
+  /graphql-request/1.8.2:
+    dependencies:
+      cross-fetch: 2.2.2
+    dev: false
+    resolution:
+      integrity: sha512-dDX2M+VMsxXFCmUX0Vo0TopIZIX4ggzOtiCsThgtrKR4niiaagsGTDIHj3fsOMFETpa064vzovI+4YV4QnMbcg==
   /growl/1.9.2:
     dev: true
     resolution:
@@ -7699,6 +7714,12 @@ packages:
       node: '>= 0.4.6'
     resolution:
       integrity: sha512-BOb67bWg2dTyax5kdef5WfU3X8xu4wPg+zHzkvls0Q/QpYycIFRLEEIdAx9Wma43DxG6Qzn4illdZoYseKWa4A==
+  /node-fetch/2.1.2:
+    dev: false
+    engines:
+      node: 4.x || >=6.0.0
+    resolution:
+      integrity: sha1-q4hOjn5X44qUR1POxwb3iNF2i7U=
   /node-forge/0.9.0:
     dev: true
     engines:
@@ -9718,6 +9739,10 @@ packages:
       fsevents: 1.2.9
     resolution:
       integrity: sha1-tNwYYcIbQn6SlQej51HiosuKs/o=
+  /sanitize.css/11.0.0:
+    dev: false
+    resolution:
+      integrity: sha512-Ox0X2lk0kOGeODJgT9S9HFv0j5Cz89ir9ILylj62/vejHPdMmahmetfocoQwyiAnseeXyDa+KIbO6ZQJe5n2Lg==
   /sass-graph/2.2.4:
     dependencies:
       glob: 7.1.4
@@ -11538,6 +11563,10 @@ packages:
     dev: true
     resolution:
       integrity: sha512-b5lim54JOPN9HtzvK9HFXvBma/rnfFeqsic0hSpjtDbVxR3dJKLc+KB4V6GgiGOvl7CY/KNh8rxSo9DKQrnUEw==
+  /whatwg-fetch/2.0.4:
+    dev: false
+    resolution:
+      integrity: sha512-dcQ1GWpOD/eEQ97k66aiEVpNnapVj90/+R+SXTPYGHpYBBypfKJEQjLrvMZ7YXbKm21gXd4NcuxUTjiv1YtLng==
   /whatwg-mimetype/2.3.0:
     dev: true
     resolution:
@@ -11967,10 +11996,12 @@ specifiers:
   eslint: ^5.16.0
   eslint-plugin-prettier: ^3.1.0
   eslint-plugin-vue: ^5.0.0
+  graphql-request: ^1.8.2
   lint-staged: ^8.1.5
   node-sass: ^4.9.0
   prettier: ^1.18.2
   register-service-worker: ^1.6.2
+  sanitize.css: ^11.0.0
   sass-loader: ^7.1.0
   ts-jest: ^23.0.0
   typescript: ^3.4.3
