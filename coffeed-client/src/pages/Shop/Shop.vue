@@ -32,8 +32,6 @@ const components = { CoffeeCard }
 export default class Shop extends Vue {
   public coffees: Coffee[] = []
 
-  @Component CoffeeCard
-
   mounted() {
     this.fetchCoffees()
   }
