@@ -30,7 +30,15 @@ const typeDefs = `
   }
 
   type Mutation {
-    createCoffee(name: String!, price: Float!, imageUrl: String!, details: String): Coffee!
+    createCoffee(data: CreateCoffeeInput): Coffee!
+    deleteCoffee(id: ID!): Coffee!
+  }
+
+  input CreateCoffeeInput {
+    name: String! 
+    price: Float! 
+    imageUrl: String! 
+    details: String
   }
 `
 
@@ -56,7 +64,8 @@ const resolvers = {
     coffee: (parent, { id }): Coffee => coffees.find(coffee => coffee.id === id),
   },
   Mutation: {
-    createCoffee: (parent, { name, price, imageUrl, details }, ctx, info): Coffee => {
+    createCoffee: (parent, args, ctx, info): Coffee => {
+      const { name, price, imageUrl, details } = args.data
       const nameTaken: boolean = coffees.some(coffee => coffee.name === name)
       if (nameTaken) {
         throw new Error(`Coffee "${name}" already exists!`)
@@ -64,6 +73,15 @@ const resolvers = {
       const newCoffee = new Coffee(name, price, imageUrl, details)
       coffees.push(newCoffee)
       return newCoffee
+    },
+    deleteCoffee: (parent, args, ctx, info): Coffee => {
+      const { id } = args
+      const toDeleteIndex = coffees.findIndex(coffee => id === coffee.id)
+      if (toDeleteIndex !== -1) {
+        return coffees.splice(toDeleteIndex, 1)[0]
+      } else {
+        throw Error(`Could not find coffee with id: ${id}`)
+      }
     },
   },
 }

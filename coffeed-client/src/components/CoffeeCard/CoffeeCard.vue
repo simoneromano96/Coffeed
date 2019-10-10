@@ -8,10 +8,10 @@
           class="opaque"
           :class="coffee.details === '' ? 'show' : 'hide'"
         >Click to get my details!</div>
-        <div class="loading">
-          <coffee-loader :id="coffee.id" :loading-percentage="loadingPercentage"></coffee-loader>
+        <div class="loading" :class="loadingPercentage < 100 ? 'show' : 'hide'">
+          <coffee-loader :id="coffee.id" :loading-percentage="loadingPercentage" :clicked="clicked"></coffee-loader>
         </div>
-        <div class="animate" :class="coffee.details === '' ? 'hide' : 'show'">{{coffee.details}}</div>
+        <div class="animate" :class="coffee.details === '' || loadingPercentage < 100 ? 'hide' : 'show'">{{coffee.details}}</div>
       </div>
     </div>
     <span class="price">{{coffee.price}} €</span>
@@ -73,6 +73,19 @@
         }
       }
 
+      .loading {
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        transition: opacity 0.5s;
+        &.show {
+          opacity: 1;
+        }
+        &.hide {
+          opacity: 0;
+        }
+      }
+
       .animate {
         width: 100%;
         height: 100%;
@@ -119,33 +132,16 @@ const components = { CoffeeLoader }
 export default class CoffeeCard extends Vue {
   @Prop() private coffee!: Coffee
   loadingPercentage: number = 0
+  clicked: boolean = false
 
   async fetchDetails() {
+    this.clicked = true
     setInterval(() => {
       if (this.loadingPercentage <= 100) {
-        this.loadingPercentage += 1
+        this.loadingPercentage += 5
       }
-    }, 100)
+    }, 200)
     await this.coffee.fetchDetails()
   }
 }
-
-/**
- * import { bindable } from "aurelia-framework"
-import { Coffee } from "classes/coffee"
-
-export class CoffeeCard {
-  @bindable coffee: Coffee
-  // loading: boolean
-  loadingPercentage: number = 0
-
-  fetchDetails = () => {
-    this.loadingPercentage = 0
-    this.coffee.fetchDetails()
-    this.loadingPercentage = 100
-  }
-
-  getName = () => this.coffee.name
-}
- */
 </script>
