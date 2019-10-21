@@ -1,3 +1,4 @@
+use crate::{MongoConnection, MongoPool};
 use actix_web::{web, Error, HttpResponse};
 use futures::Future;
 use juniper::graphiql::graphiql_source;
@@ -10,7 +11,8 @@ use juniper_from_schema::graphql_schema_from_file;
 graphql_schema_from_file!("src/schema.graphql");
 
 pub struct Context {
-    // wire up db here db_con: DbCon,
+    // wire up db here
+    db_connection: MongoConnection,
 }
 impl juniper::Context for Context {}
 
@@ -21,6 +23,7 @@ pub struct Coffee {
     id: Uuid,
     name: String,
     price: f64,
+    image_url: String,
     description: Option<String>,
 }
 
@@ -33,6 +36,9 @@ impl CoffeeFields for Coffee {
     }
     fn field_price(&self, _: &Executor<'_, Context>) -> FieldResult<&f64> {
         Ok(&self.price)
+    }
+    fn field_image_url(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
+        Ok(&self.image_url)
     }
     fn field_description(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
         Ok(&self.description)
@@ -60,6 +66,7 @@ impl QueryFields for Query {
             id: Uuid::new_v4(),
             name: String::from("My coffee"),
             price: 0.5,
+            image_url: String::from("images/espresso.jpg"),
             description: Some(String::from("Hello")),
         };
 
@@ -77,6 +84,7 @@ impl QueryFields for Query {
             id: Uuid::new_v4(),
             name: String::from("My coffee"),
             price: 0.5,
+            image_url: String::from("images/espresso.jpg"),
             description: Some(String::from("Hello")),
         };
         Ok(Some(result))
@@ -97,6 +105,7 @@ impl MutationFields for Mutation {
             id: Uuid::new_v4(),
             name,
             price,
+            image_url: String::from(""),
             description,
         };
         Ok(Some(result))
@@ -120,10 +129,10 @@ fn graphiql() -> HttpResponse {
 fn graphql(
     schema: web::Data<Arc<Schema>>,
     data: web::Json<GraphQLRequest>,
-    // db_pool: web::Data<DbPool>,
+    db_pool: web::Data<MongoPool>,
 ) -> impl Future<Item = HttpResponse, Error = Error> {
     let ctx = Context {
-        // db_con: db_pool.get().unwrap(),
+        db_connection: db_pool.get().unwrap(),
     };
 
     web::block(move || {
