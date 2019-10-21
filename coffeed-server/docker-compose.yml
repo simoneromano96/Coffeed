@@ -1,0 +1,13 @@
+version: "3.6"
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: ./.docker/fastapi.Dockerfile
+    # Expose port 8000 from container's port 80
+    ports:
+      - 8000:80
+    # Dynamic binding for live-reload
+    volumes:
+      - ./app:/app
