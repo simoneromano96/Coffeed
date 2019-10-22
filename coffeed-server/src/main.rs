@@ -1,38 +1,23 @@
 use actix_cors::Cors;
 use actix_files;
-use actix_web::{middleware, web, App, HttpServer};
+use actix_web::{middleware, App, HttpServer};
+use mongodb::{db::ThreadedDatabase, Client, ThreadedClient};
 use pretty_env_logger;
-extern crate r2d2;
-extern crate r2d2_mongodb;
-
-use r2d2::Pool;
-use r2d2_mongodb::{ConnectionOptions, MongodbConnectionManager, VerifyPeer};
 
 pub mod schema;
 
-pub type MongoPool = r2d2::Pool<MongodbConnectionManager>;
-pub type MongoConnection = r2d2::PooledConnection<MongodbConnectionManager>;
+// pub type MongoPool = r2d2::Pool<MongodbConnectionManager>;
+// pub type MongoConnection = r2d2::PooledConnection<MongodbConnectionManager>;
 
-fn create_db_pool() -> MongoPool {
-    let manager = MongodbConnectionManager::new(
-        ConnectionOptions::builder()
-            .with_host("localhost", 27017)
-            // .with_ssl(
-            //     Some("path/to/ca.crt"),
-            //     "path/to/client.crt",
-            //     "path/to/client.key",
-            //     VerifyPeer::Yes
-            // )
-            // .with_unauthenticated_ssl(
-            //     Some("path/to/ca.crt"),
-            //     VerifyPeer::No
-            // )
-            .with_db("admin")
-            .with_auth("username", "password")
-            .build(),
-    );
+fn create_db_client() -> Client {
+    let client = Client::connect("localhost", 27017).expect("Failed to initialize client.");
 
-    Pool::builder().build(manager).unwrap()
+    client
+        .db("admin")
+        .auth("username", "password")
+        .expect("Could not authenticate.");
+
+    client
 }
 
 fn main() {
@@ -41,10 +26,10 @@ fn main() {
 
     pretty_env_logger::init();
 
-    let port: u16 = 8080;
+    let port: u16 = 8082;
     let addr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
 
-    let db_pool = create_db_pool();
+    let db_client = create_db_client();
 
     // Start http server
     HttpServer::new(move || {
@@ -52,7 +37,7 @@ fn main() {
             .wrap(Cors::new())
             .wrap(middleware::Logger::default())
             // Save db_client in Server's state
-            .data(db_pool.clone())
+            .data(db_client.clone())
             .configure(schema::register)
             // Serve images
             .service(actix_files::Files::new("/public", "src/public").show_files_listing())

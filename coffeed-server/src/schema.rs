@@ -1,35 +1,48 @@
-use crate::{MongoConnection, MongoPool};
 use actix_web::{web, Error, HttpResponse};
 use futures::Future;
 use juniper::graphiql::graphiql_source;
 use juniper::http::{playground::playground_source, GraphQLRequest};
-use juniper::{Executor, FieldResult};
+use juniper::{Executor, FieldResult, FieldError};
+use mongodb::coll::options::{IndexModel, IndexOptions};
+use mongodb::oid::ObjectId;
+use mongodb::{bson, doc, Client, ThreadedClient};
+use serde_derive::{Deserialize, Serialize};
 use std::sync::Arc;
-use uuid::Uuid;
+use wither::model::Model;
+use wither_derive::Model;
 
 use juniper_from_schema::graphql_schema_from_file;
 graphql_schema_from_file!("src/schema.graphql");
 
 pub struct Context {
     // wire up db here
-    db_connection: MongoConnection,
+    db_client: Client,
 }
 impl juniper::Context for Context {}
 
 pub struct Query;
 pub struct Mutation;
 
+#[derive(Model, Serialize, Deserialize)]
 pub struct Coffee {
-    id: Uuid,
-    name: String,
-    price: f64,
-    image_url: String,
-    description: Option<String>,
+    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
+    pub id: Option<ObjectId>,
+
+    #[model(index(index = "asc", unique = "true"))]
+    pub name: String,
+
+    pub price: f64,
+
+    pub image_url: String,
+
+    pub description: Option<String>,
 }
+
+
 
 impl CoffeeFields for Coffee {
     fn field_id(&self, _: &Executor<'_, Context>) -> FieldResult<juniper::ID> {
-        Ok(juniper::ID::new(self.id.to_string()))
+        Ok(juniper::ID::new(self.id.as_ref().unwrap().to_hex()))
     }
     fn field_name(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
         Ok(&self.name)
@@ -63,7 +76,7 @@ impl QueryFields for Query {
         let mut result = Vec::new();
 
         let coffee = Coffee {
-            id: Uuid::new_v4(),
+            id: Some(ObjectId::new().unwrap()),
             name: String::from("My coffee"),
             price: 0.5,
             image_url: String::from("images/espresso.jpg"),
@@ -81,7 +94,7 @@ impl QueryFields for Query {
         _id: juniper::ID,
     ) -> FieldResult<Option<Coffee>> {
         let result = Coffee {
-            id: Uuid::new_v4(),
+            id: Some(ObjectId::new().unwrap()),
             name: String::from("My coffee"),
             price: 0.5,
             image_url: String::from("images/espresso.jpg"),
@@ -95,20 +108,45 @@ impl QueryFields for Query {
 impl MutationFields for Mutation {
     fn field_create_coffee(
         &self,
-        _executor: &Executor<'_, Context>,
+        executor: &Executor<'_, Context>,
         _trail: &QueryTrail<'_, Coffee, Walked>,
         name: String,
         price: f64,
         description: Option<String>,
-    ) -> FieldResult<Option<Coffee>> {
-        let result = Coffee {
-            id: Uuid::new_v4(),
+    ) -> FieldResult<Coffee> {
+        let mut new_coffee = Coffee {
+            id: Some(ObjectId::new().unwrap()),
             name,
             price,
             image_url: String::from(""),
             description,
         };
-        Ok(Some(result))
+
+        // 1. Get context
+        let context = executor.context();
+        // 2. Get the db Connection
+        let connection: Client = context.db_client.clone();
+        // 3. Get the db
+        let database = connection.db("coffeed");
+        // 3. Get the collection
+        // let collection: Collection = connection.db("coffed").collection("coffees");
+        // 4. Create indexes
+        // let index_model: IndexModel = IndexModel::new(keys: doc! {"name"}, options: Default);
+        // collection.create_index_model(model: IndexModel);
+        // 5. Write
+        // let doc = doc! {
+        //     "_id": new_coffee.id.to_string(),
+        //     "name": new_coffee.name.to_string(),
+        //     "price": new_coffee.price,
+        //     "imageUrl": new_coffee.image_url.clone(),
+        //     "description": new_coffee.description.clone().unwrap_or_else(|| String::from(""))
+        // };
+        // collection.insert_one(doc, None).unwrap();
+        // Ok(new_coffee)
+        // Err(error) => Err("Could not insert")
+        // 4. Save
+        new_coffee.save(database, None).unwrap();
+        Ok(new_coffee)
     }
 }
 
@@ -129,10 +167,10 @@ fn graphiql() -> HttpResponse {
 fn graphql(
     schema: web::Data<Arc<Schema>>,
     data: web::Json<GraphQLRequest>,
-    db_pool: web::Data<MongoPool>,
+    db_client: web::Data<Client>,
 ) -> impl Future<Item = HttpResponse, Error = Error> {
     let ctx = Context {
-        db_connection: db_pool.get().unwrap(),
+        db_client: db_client.get_ref().clone(),
     };
 
     web::block(move || {

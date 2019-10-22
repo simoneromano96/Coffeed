@@ -23,7 +23,7 @@ type Query {
 }
 
 type Mutation {
-  createCoffee(name: String!, price: Float!, description: String): Coffee
+  createCoffee(name: String!, price: Float!, description: String): Coffee!
     @juniper(ownership: "owned")
   #   updateCoffee(data: CoffeeInput!): Coffee
   #   deleteCoffee(id: ID!): Coffee
