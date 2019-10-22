@@ -11,20 +11,21 @@ type Coffee {
   description: String
 }
 
-# type CoffeeInput {
-#   name: String!
-#   price: Float!
-#   description: String
-# }
+input CoffeeInput {
+  name: String!
+  price: Float!
+  description: String
+}
 
 type Query {
   coffees: [Coffee!]! @juniper(ownership: "owned")
-  coffee(id: ID!): Coffee @juniper(ownership: "owned")
+  coffee(id: ID!): Coffee! @juniper(ownership: "owned")
 }
 
 type Mutation {
-  createCoffee(name: String!, price: Float!, description: String): Coffee!
-    @juniper(ownership: "owned")
+  #createCoffee(name: String!, price: Float!, description: String): Coffee!
+  #  @juniper(ownership: "owned")
+  createCoffee(data: CoffeeInput!): Coffee! @juniper(ownership: "owned")
   #   updateCoffee(data: CoffeeInput!): Coffee
   #   deleteCoffee(id: ID!): Coffee
 }

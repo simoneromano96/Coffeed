@@ -1,7 +1,9 @@
 use actix_cors::Cors;
 use actix_files;
 use actix_web::{middleware, App, HttpServer};
-use mongodb::{db::ThreadedDatabase, Client, ThreadedClient};
+use mongodb::coll::options::IndexOptions;
+use mongodb::coll::Collection;
+use mongodb::{bson, db::ThreadedDatabase, doc, Client, ThreadedClient};
 use pretty_env_logger;
 
 pub mod schema;
@@ -11,7 +13,7 @@ pub mod schema;
 
 fn create_db_client() -> Client {
     let client = Client::connect("localhost", 27017).expect("Failed to initialize client.");
-
+    // Authenticate
     client
         .db("admin")
         .auth("username", "password")
@@ -30,6 +32,13 @@ fn main() {
     let addr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
 
     let db_client = create_db_client();
+    // Create indexes
+    let collection: Collection = db_client.db("coffeed").collection("coffees");
+    let mut name_index = IndexOptions::new();
+    name_index.unique = Some(true);
+    collection
+        .create_index(doc! {"name": 1}, Some(name_index))
+        .expect("Could not create index");
 
     // Start http server
     HttpServer::new(move || {
