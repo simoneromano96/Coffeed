@@ -1,4 +1,5 @@
 use actix_web::{web, Error, HttpResponse};
+use chrono::{NaiveDateTime, Utc};
 use futures::Future;
 use juniper::graphiql::graphiql_source;
 use juniper::http::{playground::playground_source, GraphQLRequest};
@@ -31,6 +32,13 @@ pub struct Coffee {
     pub description: Option<String>,
 }
 
+pub struct BaseResponse {
+    pub error: bool,
+    pub status_code: i32,
+    pub timestamp: NaiveDateTime,
+    pub message: String,
+}
+
 impl CoffeeFields for Coffee {
     fn field_id(&self, _: &Executor<'_, Context>) -> FieldResult<juniper::ID> {
         Ok(juniper::ID::new(self.id.to_hex()))
@@ -49,31 +57,24 @@ impl CoffeeFields for Coffee {
     }
 }
 
-/*
-pub struct CoffeeInput {
-    name: String,
-    price: f64,
-    description: Option<String>,
-}
-
-impl CoffeeInputFields for CoffeeInput {
-    fn field_name(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
-        Ok(&self.name)
+impl BaseResponseFields for BaseResponse {
+    fn field_error(&self, _: &Executor<'_, Context>) -> FieldResult<&bool> {
+        Ok(&self.error)
     }
-    fn field_price(&self, _: &Executor<'_, Context>) -> FieldResult<&f64> {
-        Ok(&self.price)
+    fn field_status_code(&self, _: &Executor<'_, Context>) -> FieldResult<&i32> {
+        Ok(&self.status_code)
     }
-    // fn field_image_url(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
-    //     Ok(&self.image_url)
-    // }
-    fn field_description(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
-        Ok(&self.description)
+    fn field_timestamp(&self, _: &Executor<'_, Context>) -> FieldResult<&NaiveDateTime> {
+        Ok(&self.timestamp)
+    }
+    fn field_message(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
+        Ok(&self.message)
     }
 }
-*/
 
 // Query resolvers
 impl QueryFields for Query {
+    // TODO Handle error!
     fn field_coffees(
         &self,
         executor: &Executor<'_, Context>,
@@ -100,6 +101,7 @@ impl QueryFields for Query {
         Ok(result)
     }
 
+    // TODO Handle error!
     fn field_coffee(
         &self,
         executor: &juniper::Executor<'_, Context>,
@@ -132,9 +134,9 @@ impl MutationFields for Mutation {
     fn field_create_coffee(
         &self,
         executor: &Executor<'_, Context>,
-        _trail: &QueryTrail<'_, Coffee, Walked>,
+        _trail: &QueryTrail<'_, BaseResponse, Walked>,
         data: CoffeeInput,
-    ) -> FieldResult<Coffee> {
+    ) -> FieldResult<BaseResponse> {
         let new_coffee = Coffee {
             id: ObjectId::new().unwrap(),
             name: data.name,
@@ -157,8 +159,71 @@ impl MutationFields for Mutation {
         if let bson::Bson::Document(document) = bson {
             collection.insert_one(document, None)?; // Insert into a MongoDB collection
         }
+        // 7. Create response
+        let response: BaseResponse = BaseResponse {
+            error: false,
+            status_code: 200,
+            timestamp: Utc::now().naive_utc(),
+            message: String::from("Created successfully"),
+        };
 
-        Ok(new_coffee)
+        Ok(response)
+    }
+
+    // TODO Handle error!
+    fn field_update_coffee(
+        &self,
+        executor: &Executor<'_, Context>,
+        _trail: &QueryTrail<'_, BaseResponse, Walked>,
+        data: UpdateCoffeeInput,
+    ) -> FieldResult<BaseResponse> {
+        // 1. Get context
+        let context = executor.context();
+        // 2. Get the db Connection
+        let connection: Client = context.db_client.clone();
+        // 3. Get the db
+        let database = connection.db("coffeed");
+        // 4. Get collection
+        let collection: Collection = database.collection("coffees");
+        // 5. Convert objectId
+        let oid = ObjectId::with_string(&data.id).expect("Id not valid");
+        // 6. Serialize
+        // let bson = bson::to_bson(&data)?;
+        // 7. Update
+        let result = collection.update_one(doc! { "_id":  oid }, doc! { "name": data.name.unwrap(), "price": data.price.unwrap(), "description": data.description.unwrap() }, None);
+        // 8. Create response
+        let response: BaseResponse = BaseResponse {
+            error: false,
+            status_code: 200,
+            timestamp: Utc::now().naive_utc(),
+            message: String::from("Updated successfully"),
+        };
+
+        Ok(response)
+    }
+
+    // TODO Handle error!
+    fn field_delete_coffee(
+        &self,
+        executor: &juniper::Executor<'_, Context>,
+        _parent: &juniper_from_schema::QueryTrail<BaseResponse, juniper_from_schema::Walked>,
+        id: juniper::ID,
+    ) -> FieldResult<BaseResponse> {
+        // 1. Get context
+        let context = executor.context();
+        // 2. Get the db Connection
+        let connection: Client = context.db_client.clone();
+        // 3. Get the db
+        let database = connection.db("coffeed");
+        // 4. Get collection
+        let collection: Collection = database.collection("coffees");
+        // 5. Convert objectId
+        let oid = ObjectId::with_string(&id).expect("Id not valid");
+        // 6. Find coffee
+        let result_document = collection
+            .find_one_and_delete(doc! { "_id":  oid }, None)?
+            .expect("Document not found");
+        Ok(result)
     }
 }
 

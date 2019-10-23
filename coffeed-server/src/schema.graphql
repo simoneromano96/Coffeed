@@ -11,9 +11,25 @@ type Coffee {
   description: String
 }
 
+scalar DateTimeUtc @juniper(with_time_zone: false)
+
+type BaseResponse {
+  error: Boolean!
+  statusCode: Int!
+  timestamp: DateTimeUtc!
+  message: String!
+}
+
 input CoffeeInput {
   name: String!
   price: Float!
+  description: String
+}
+
+input UpdateCoffeeInput {
+  id: ID!
+  name: String
+  price: Float
   description: String
 }
 
@@ -23,9 +39,8 @@ type Query {
 }
 
 type Mutation {
-  #createCoffee(name: String!, price: Float!, description: String): Coffee!
-  #  @juniper(ownership: "owned")
-  createCoffee(data: CoffeeInput!): Coffee! @juniper(ownership: "owned")
-  #   updateCoffee(data: CoffeeInput!): Coffee
-  #   deleteCoffee(id: ID!): Coffee
+  #createCoffee(name: String!, price: Float!, description: String): Coffee! @juniper(ownership: "owned")
+  createCoffee(data: CoffeeInput!): BaseResponse! @juniper(ownership: "owned")
+  updateCoffee(data: UpdateCoffeeInput!): BaseResponse! @juniper(ownership: "owned")
+  deleteCoffee(id: ID!): BaseResponse! @juniper(ownership: "owned")
 }
