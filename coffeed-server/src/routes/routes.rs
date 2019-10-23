@@ -26,8 +26,9 @@ pub fn save_file(field: Field) -> impl Future<Item = i64, Error = Error> {
     let filename: &str = content_disposition.get_filename().unwrap(); // filename.fake.extension
     let splitted: Vec<&str> = filename.split('.').collect(); // [filename, extension]
     let file_extension: &str = splitted.last().unwrap(); // extension
+    let uploaded_filename = format!("{}.{}", nanoid::simple(), file_extension);
 
-    let file_path_string = format!("src/public/uploads/{}.{}", nanoid::simple(), file_extension);
+    let file_path_string = format!("src/public/uploads/{}", uploaded_filename);
     let file = match fs::File::create(file_path_string) {
         Ok(file) => file,
         Err(e) => return Either::A(err(error::ErrorInternalServerError(e))),
