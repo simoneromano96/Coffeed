@@ -1,3 +1,4 @@
+// use crate::routes::upload;
 use actix_web::{web, Error, HttpResponse};
 use chrono::{NaiveDateTime, Utc};
 use futures::Future;
@@ -6,10 +7,12 @@ use juniper::http::{playground::playground_source, GraphQLRequest};
 use juniper::{graphql_value, Executor, FieldError, FieldResult};
 use mongodb::coll::Collection;
 use mongodb::db::ThreadedDatabase;
-use mongodb::oid::ObjectId;
 use mongodb::{bson, doc, Client, ThreadedClient};
+use nanoid;
 use serde_derive::{Deserialize, Serialize};
 use std::sync::Arc;
+
+use crate::routes::upload;
 
 use juniper_from_schema::graphql_schema_from_file;
 graphql_schema_from_file!("src/schema.graphql");
@@ -25,7 +28,7 @@ pub struct Mutation;
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Coffee {
     #[serde(rename = "_id")]
-    pub id: ObjectId,
+    pub id: String,
     pub name: String,
     pub price: f64,
     pub image_url: String,
@@ -41,7 +44,7 @@ pub struct BaseResponse {
 
 impl CoffeeFields for Coffee {
     fn field_id(&self, _: &Executor<'_, Context>) -> FieldResult<juniper::ID> {
-        Ok(juniper::ID::new(self.id.to_hex()))
+        Ok(juniper::ID::new(self.id.clone()))
     }
     fn field_name(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
         Ok(&self.name)
@@ -117,10 +120,10 @@ impl QueryFields for Query {
         // 4. Get collection
         let collection: Collection = database.collection("coffees");
         // 5. Convert objectId
-        let oid = ObjectId::with_string(&id).expect("Id not valid");
+        // let oid = ObjectId::with_string(&id).expect("Id not valid");
         // 6. Find coffee
         let result_document = collection
-            .find_one(Some(doc! { "_id":  oid }), None)?
+            .find_one(Some(doc! { "_id":  id.to_string() }), None)?
             .expect("Document not found");
         // 7. Deserialize the document into a Coffee instance
         let result: Coffee = bson::from_bson(bson::Bson::Document(result_document))?;
@@ -138,7 +141,7 @@ impl MutationFields for Mutation {
         data: CoffeeInput,
     ) -> FieldResult<BaseResponse> {
         let new_coffee = Coffee {
-            id: ObjectId::new().unwrap(),
+            id: nanoid::simple(),
             name: data.name,
             price: data.price,
             image_url: String::from(""),
@@ -186,11 +189,11 @@ impl MutationFields for Mutation {
         // 4. Get collection
         let collection: Collection = database.collection("coffees");
         // 5. Convert objectId
-        let oid = ObjectId::with_string(&data.id).expect("Id not valid");
+        // let oid = ObjectId::with_string(&data.id).expect("Id not valid");
         // 6. Serialize
         // let bson = bson::to_bson(&data)?;
         // 7. Update
-        let result = collection.update_one(doc! { "_id":  oid }, doc! { "name": data.name.unwrap(), "price": data.price.unwrap(), "description": data.description.unwrap() }, None);
+        let result = collection.update_one(doc! { "_id":  data.id.to_string() }, doc! { "name": data.name.unwrap(), "price": data.price.unwrap(), "description": data.description.unwrap() }, None);
         // 8. Create response
         let response: BaseResponse = BaseResponse {
             error: false,
@@ -218,12 +221,20 @@ impl MutationFields for Mutation {
         // 4. Get collection
         let collection: Collection = database.collection("coffees");
         // 5. Convert objectId
-        let oid = ObjectId::with_string(&id).expect("Id not valid");
-        // 6. Find coffee
-        let result_document = collection
-            .find_one_and_delete(doc! { "_id":  oid }, None)?
+        // let oid = ObjectId::with_string(&id).expect("Id not valid");
+        // 6. Find and delete coffee
+        collection
+            .find_one_and_delete(doc! { "_id":  id.to_string() }, None)?
             .expect("Document not found");
-        Ok(result)
+        // 7. Create response
+        let response: BaseResponse = BaseResponse {
+            error: false,
+            status_code: 200,
+            timestamp: Utc::now().naive_utc(),
+            message: String::from("Updated successfully"),
+        };
+
+        Ok(response)
     }
 }
 
@@ -269,5 +280,6 @@ pub fn register(config: &mut web::ServiceConfig) {
         .data(schema)
         .route("/graphql", web::post().to_async(graphql))
         .route("/playground", web::get().to(playground))
-        .route("/graphiql", web::get().to(graphiql));
+        .route("/graphiql", web::get().to(graphiql))
+        .route("/upload", web::post().to_async(upload));
 }

@@ -6,6 +6,7 @@ use mongodb::coll::Collection;
 use mongodb::{bson, db::ThreadedDatabase, doc, Client, ThreadedClient};
 use pretty_env_logger;
 
+pub mod routes;
 pub mod schema;
 
 // pub type MongoPool = r2d2::Pool<MongodbConnectionManager>;
