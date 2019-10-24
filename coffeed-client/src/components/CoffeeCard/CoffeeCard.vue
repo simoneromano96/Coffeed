@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <span class="name">{{coffee.name}}</span>
-    <div class="image-wrap" @click="fetchDetails()">
+    <div class="image-wrap" @click="fetchDescription()">
       <img :src="coffee.imageUrl" alt="Coffee image" class="image" />
       <div class="details">
         <div
@@ -11,7 +11,10 @@
         <div class="loading" :class="loadingPercentage < 100 ? 'show' : 'hide'">
           <coffee-loader :id="coffee.id" :loading-percentage="loadingPercentage" :clicked="clicked"></coffee-loader>
         </div>
-        <div class="animate" :class="coffee.details === '' || loadingPercentage < 100 ? 'hide' : 'show'">{{coffee.details}}</div>
+        <div
+          class="animate"
+          :class="coffee.details === '' || loadingPercentage < 100 ? 'hide' : 'show'"
+        >{{coffee.details}}</div>
       </div>
     </div>
     <span class="price">{{coffee.price}} €</span>
@@ -134,14 +137,14 @@ export default class CoffeeCard extends Vue {
   loadingPercentage: number = 0
   clicked: boolean = false
 
-  async fetchDetails() {
+  async fetchDescription() {
     this.clicked = true
     setInterval(() => {
       if (this.loadingPercentage <= 100) {
         this.loadingPercentage += 5
       }
     }, 200)
-    await this.coffee.fetchDetails()
+    await this.coffee.fetchDescription()
   }
 }
 </script>
