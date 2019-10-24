@@ -23,13 +23,16 @@ type Coffee {
 input CoffeeInput {
   name: String!
   price: Float!
+  imageUrl: String!
   description: String
 }
 
-input UpdateCoffeeInput {
+# I needed more control of this one
+type UpdateCoffeeInput {
   id: ID!
   name: String
   price: Float
+  imageUrl: String
   description: String
 }
 

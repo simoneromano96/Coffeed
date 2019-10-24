@@ -1,14 +1,7 @@
 use actix_web::{web, Error, HttpResponse};
 use chrono::{NaiveDateTime, Utc};
 use futures::Future;
-use juniper::{
-    graphiql::graphiql_source,
-    http::{playground::playground_source, GraphQLRequest},
-    graphql_value,
-    Executor,
-    FieldError,
-    FieldResult
-};
+use juniper::{graphiql::graphiql_source, http::{playground::playground_source, GraphQLRequest}, graphql_value, Executor, FieldError, FieldResult, ID};
 use mongodb::{
     coll::Collection,
     db::ThreadedDatabase,
@@ -40,13 +33,9 @@ pub struct Mutation;
 pub struct Coffee {
     #[serde(rename = "_id")]
     pub id: ObjectId,
-
     pub name: String,
-
     pub price: f64,
-
     pub image_url: String,
-
     pub description: Option<String>,
 }
 
@@ -68,7 +57,6 @@ impl CoffeeFields for Coffee {
     }
 }
 
-
 pub struct BaseResponse {
     pub error: bool,
     pub status_code: i32,
@@ -88,6 +76,34 @@ impl BaseResponseFields for BaseResponse {
     }
     fn field_message(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
         Ok(&self.message)
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct UpdateCoffeeInput {
+    #[serde(rename = "_id")]
+    pub id: ObjectId,
+    pub name: Option<String>,
+    pub price: Option<f64>,
+    pub image_url: Option<String>,
+    pub description: Option<String>,
+}
+
+impl UpdateCoffeeInputFields for UpdateCoffeeInput {
+    fn field_id(&self, _: &Executor<'_, Context>) -> FieldResult<juniper::ID> {
+        Ok(juniper::ID::new(self.id.to_hex()))
+    }
+    fn field_name(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
+        Ok(&self.name)
+    }
+    fn field_price(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<f64>> {
+        Ok(&self.price)
+    }
+    fn field_image_url(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
+        Ok(&self.image_url)
+    }
+    fn field_description(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
+        Ok(&self.description)
     }
 }
 
@@ -161,7 +177,7 @@ impl MutationFields for Mutation {
             id: ObjectId::new().unwrap(),
             name: data.name,
             price: data.price,
-            image_url: String::from(""),
+            image_url: data.image_url,
             description: data.description,
         };
 
@@ -206,11 +222,16 @@ impl MutationFields for Mutation {
         // 4. Get collection
         let collection: Collection = database.collection("coffees");
         // 5. Convert objectId
-        // let oid = ObjectId::with_string(&data.id).expect("Id not valid");
+        let oid = ObjectId::with_string(&data.id).expect("Id not valid");
         // 6. Serialize
-        // let bson = bson::to_bson(&data)?;
+        let bson = bson::to_bson(&data)?;
         // 7. Update
-        let result = collection.update_one(doc! { "_id":  data.id.to_string() }, doc! { "name": data.name.unwrap(), "price": data.price.unwrap(), "description": data.description.unwrap() }, None);
+        // let result = collection.update_one(doc! { "_id":  data.id.to_hex() }, doc! { "name": data.name.unwrap(), "price": data.price.unwrap(), "description": data.description.unwrap(), "imageUrl": data.imageUrl.unwrap() }, None);
+        // 7. Update
+        if let bson::Bson::Document(document) = bson {
+            collection.update_one(doc! {"_id":  oid}, document, None)?; // Insert into a MongoDB collection
+        }
+
         // 8. Create response
         let response: BaseResponse = BaseResponse {
             error: false,
