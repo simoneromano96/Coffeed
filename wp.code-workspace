@@ -1,14 +1,11 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "coffeed-client"
-		},
-		{
-			"path": "coffeed-server"
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "coffeed-server"
+    },
+    {
+      "path": "coffeed-client"
+    }
+  ],
+  "settings": {}
 }
