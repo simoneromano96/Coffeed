@@ -36,7 +36,7 @@ pub fn save_file(field: Field) -> impl Future<Item = String, Error = Error> {
     };
     Either::B(
         field
-            .fold((file, 0i64), move |(mut file, mut acc), bytes| {
+            .fold((file, 0i64), move |(mut file, acc), bytes| {
                 // fs operations are blocking, we have to execute writes
                 // on threadpool
                 web::block(move || {

@@ -27,8 +27,7 @@ input CoffeeInput {
   description: String
 }
 
-# I needed more control of this one
-type UpdateCoffeeInput {
+input UpdateCoffeeInput {
   id: ID!
   name: String
   price: Float
@@ -44,6 +43,7 @@ type Query {
 type Mutation {
   #createCoffee(name: String!, price: Float!, description: String): Coffee! @juniper(ownership: "owned")
   createCoffee(data: CoffeeInput!): BaseResponse! @juniper(ownership: "owned")
-  updateCoffee(data: UpdateCoffeeInput!): BaseResponse! @juniper(ownership: "owned")
+  updateCoffee(data: UpdateCoffeeInput!): BaseResponse!
+    @juniper(ownership: "owned")
   deleteCoffee(id: ID!): BaseResponse! @juniper(ownership: "owned")
 }

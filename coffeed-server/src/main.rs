@@ -5,6 +5,7 @@ use mongodb::coll::options::IndexOptions;
 use mongodb::coll::Collection;
 use mongodb::{bson, db::ThreadedDatabase, doc, Client, ThreadedClient};
 use pretty_env_logger;
+use std::net::SocketAddr;
 
 pub mod routes;
 pub mod schema;
@@ -31,12 +32,12 @@ fn main() {
     pretty_env_logger::init();
 
     let port: u16 = 8082;
-    let addr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
+    let addr: SocketAddr = std::net::SocketAddr::from(([127, 0, 0, 1], port));
 
     let db_client = create_db_client();
     // Create indexes
     let collection: Collection = db_client.db("coffeed").collection("coffees");
-    let mut name_index = IndexOptions::new();
+    let mut name_index: IndexOptions = IndexOptions::new();
     name_index.unique = Some(true);
     collection
         .create_index(doc! {"name": 1}, Some(name_index))

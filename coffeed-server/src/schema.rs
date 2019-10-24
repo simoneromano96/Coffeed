@@ -1,23 +1,19 @@
+use crate::routes::upload;
 use actix_web::{web, Error, HttpResponse};
 use chrono::{NaiveDateTime, Utc};
 use futures::Future;
-use juniper::{graphiql::graphiql_source, http::{playground::playground_source, GraphQLRequest}, graphql_value, Executor, FieldError, FieldResult, ID};
-use mongodb::{
-    coll::Collection,
-    db::ThreadedDatabase,
-    bson,
-    doc,
-    Client,
-    ThreadedClient,
-    oid::ObjectId
+use juniper::{
+    graphiql::graphiql_source,
+    http::{playground::playground_source, GraphQLRequest},
+    Executor, FieldResult,
 };
-use nanoid;
+use juniper_from_schema::graphql_schema_from_file;
+use mongodb::{
+    bson, coll::Collection, db::ThreadedDatabase, doc, oid::ObjectId, Client, ThreadedClient,
+};
+use serde::ser::{Serialize, SerializeStruct, Serializer};
 use serde_derive::{Deserialize, Serialize};
 use std::sync::Arc;
-use juniper_from_schema::{graphql_schema_from_file};
-
-// use crate::models::{Coffee};
-use crate::routes::{upload};
 
 graphql_schema_from_file!("src/schema.graphql");
 
@@ -35,6 +31,7 @@ pub struct Coffee {
     pub id: ObjectId,
     pub name: String,
     pub price: f64,
+    #[serde(rename = "imageUrl")]
     pub image_url: String,
     pub description: Option<String>,
 }
@@ -79,31 +76,18 @@ impl BaseResponseFields for BaseResponse {
     }
 }
 
-#[derive(Serialize, Deserialize)]
-pub struct UpdateCoffeeInput {
-    #[serde(rename = "_id")]
-    pub id: ObjectId,
-    pub name: Option<String>,
-    pub price: Option<f64>,
-    pub image_url: Option<String>,
-    pub description: Option<String>,
-}
-
-impl UpdateCoffeeInputFields for UpdateCoffeeInput {
-    fn field_id(&self, _: &Executor<'_, Context>) -> FieldResult<juniper::ID> {
-        Ok(juniper::ID::new(self.id.to_hex()))
-    }
-    fn field_name(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
-        Ok(&self.name)
-    }
-    fn field_price(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<f64>> {
-        Ok(&self.price)
-    }
-    fn field_image_url(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
-        Ok(&self.image_url)
-    }
-    fn field_description(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
-        Ok(&self.description)
+impl Serialize for UpdateCoffeeInput {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut s = serializer.serialize_struct("UpdateCoffeeInput", 4)?;
+        // s.serialize_field("_id", &self.id)?; //! Don't serialize ID
+        s.serialize_field("name", &self.name)?;
+        s.serialize_field("price", &self.price)?;
+        s.serialize_field("imageUrl", &self.image_url)?;
+        s.serialize_field("description", &self.description)?;
+        s.end()
     }
 }
 
@@ -152,10 +136,10 @@ impl QueryFields for Query {
         // 4. Get collection
         let collection: Collection = database.collection("coffees");
         // 5. Convert objectId
-        // let oid = ObjectId::with_string(&id).expect("Id not valid");
+        let oid = ObjectId::with_string(&id).expect("Id not valid");
         // 6. Find coffee
         let result_document = collection
-            .find_one(Some(doc! { "_id":  id.to_string() }), None)?
+            .find_one(Some(doc! { "_id":  oid }), None)?
             .expect("Document not found");
         // 7. Deserialize the document into a Coffee instance
         let result: Coffee = bson::from_bson(bson::Bson::Document(result_document))?;
@@ -226,12 +210,10 @@ impl MutationFields for Mutation {
         // 6. Serialize
         let bson = bson::to_bson(&data)?;
         // 7. Update
-        // let result = collection.update_one(doc! { "_id":  data.id.to_hex() }, doc! { "name": data.name.unwrap(), "price": data.price.unwrap(), "description": data.description.unwrap(), "imageUrl": data.imageUrl.unwrap() }, None);
-        // 7. Update
         if let bson::Bson::Document(document) = bson {
-            collection.update_one(doc! {"_id":  oid}, document, None)?; // Insert into a MongoDB collection
+            // Update
+            collection.find_one_and_update(doc! {"_id":  oid}, doc! { "$set": document }, None)?;
         }
-
         // 8. Create response
         let response: BaseResponse = BaseResponse {
             error: false,
