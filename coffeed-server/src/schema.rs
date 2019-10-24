@@ -1,20 +1,31 @@
-// use crate::routes::upload;
 use actix_web::{web, Error, HttpResponse};
 use chrono::{NaiveDateTime, Utc};
 use futures::Future;
-use juniper::graphiql::graphiql_source;
-use juniper::http::{playground::playground_source, GraphQLRequest};
-use juniper::{graphql_value, Executor, FieldError, FieldResult};
-use mongodb::coll::Collection;
-use mongodb::db::ThreadedDatabase;
-use mongodb::{bson, doc, Client, ThreadedClient};
+use juniper::{
+    graphiql::graphiql_source,
+    http::{playground::playground_source, GraphQLRequest},
+    graphql_value,
+    Executor,
+    FieldError,
+    FieldResult
+};
+use mongodb::{
+    coll::Collection,
+    db::ThreadedDatabase,
+    bson,
+    doc,
+    Client,
+    ThreadedClient,
+    oid::ObjectId
+};
 use nanoid;
 use serde_derive::{Deserialize, Serialize};
 use std::sync::Arc;
+use juniper_from_schema::{graphql_schema_from_file};
 
-use crate::routes::upload;
+// use crate::models::{Coffee};
+use crate::routes::{upload};
 
-use juniper_from_schema::graphql_schema_from_file;
 graphql_schema_from_file!("src/schema.graphql");
 
 pub struct Context {
@@ -25,26 +36,23 @@ impl juniper::Context for Context {}
 pub struct Query;
 pub struct Mutation;
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize)]
 pub struct Coffee {
     #[serde(rename = "_id")]
-    pub id: String,
-    pub name: String,
-    pub price: f64,
-    pub image_url: String,
-    pub description: Option<String>,
-}
+    pub id: ObjectId,
 
-pub struct BaseResponse {
-    pub error: bool,
-    pub status_code: i32,
-    pub timestamp: NaiveDateTime,
-    pub message: String,
+    pub name: String,
+
+    pub price: f64,
+
+    pub image_url: String,
+
+    pub description: Option<String>,
 }
 
 impl CoffeeFields for Coffee {
     fn field_id(&self, _: &Executor<'_, Context>) -> FieldResult<juniper::ID> {
-        Ok(juniper::ID::new(self.id.clone()))
+        Ok(juniper::ID::new(self.id.to_hex()))
     }
     fn field_name(&self, _: &Executor<'_, Context>) -> FieldResult<&String> {
         Ok(&self.name)
@@ -58,6 +66,14 @@ impl CoffeeFields for Coffee {
     fn field_description(&self, _: &Executor<'_, Context>) -> FieldResult<&Option<String>> {
         Ok(&self.description)
     }
+}
+
+
+pub struct BaseResponse {
+    pub error: bool,
+    pub status_code: i32,
+    pub timestamp: NaiveDateTime,
+    pub message: String,
 }
 
 impl BaseResponseFields for BaseResponse {
@@ -141,7 +157,8 @@ impl MutationFields for Mutation {
         data: CoffeeInput,
     ) -> FieldResult<BaseResponse> {
         let new_coffee = Coffee {
-            id: nanoid::simple(),
+            // id: nanoid::simple(),
+            id: ObjectId::new().unwrap(),
             name: data.name,
             price: data.price,
             image_url: String::from(""),

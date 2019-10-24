@@ -3,14 +3,6 @@ schema {
   mutation: Mutation
 }
 
-type Coffee {
-  id: ID! @juniper(ownership: "owned")
-  name: String!
-  price: Float!
-  imageUrl: String!
-  description: String
-}
-
 scalar DateTimeUtc @juniper(with_time_zone: false)
 
 type BaseResponse {
@@ -18,6 +10,14 @@ type BaseResponse {
   statusCode: Int!
   timestamp: DateTimeUtc!
   message: String!
+}
+
+type Coffee {
+  id: ID! @juniper(ownership: "owned")
+  name: String!
+  price: Float!
+  imageUrl: String!
+  description: String
 }
 
 input CoffeeInput {

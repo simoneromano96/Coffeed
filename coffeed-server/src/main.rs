@@ -8,6 +8,7 @@ use pretty_env_logger;
 
 pub mod routes;
 pub mod schema;
+// pub mod models;
 
 // pub type MongoPool = r2d2::Pool<MongodbConnectionManager>;
 // pub type MongoConnection = r2d2::PooledConnection<MongodbConnectionManager>;

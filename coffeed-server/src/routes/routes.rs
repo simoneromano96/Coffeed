@@ -21,12 +21,13 @@ pub fn upload(multipart: Multipart) -> impl Future<Item = HttpResponse, Error = 
         })
 }
 
-pub fn save_file(field: Field) -> impl Future<Item = i64, Error = Error> {
+pub fn save_file(field: Field) -> impl Future<Item = String, Error = Error> {
     let content_disposition: ContentDisposition = field.content_disposition().unwrap();
     let filename: &str = content_disposition.get_filename().unwrap(); // filename.fake.extension
     let splitted: Vec<&str> = filename.split('.').collect(); // [filename, extension]
     let file_extension: &str = splitted.last().unwrap(); // extension
-    let uploaded_filename = format!("{}.{}", nanoid::simple(), file_extension);
+    let uploaded_filename: String = format!("{}.{}", nanoid::simple(), file_extension);
+    let url: String = format!("{}/{}", "/public/uploads", uploaded_filename);
 
     let file_path_string = format!("src/public/uploads/{}", uploaded_filename);
     let file = match fs::File::create(file_path_string) {
@@ -43,7 +44,7 @@ pub fn save_file(field: Field) -> impl Future<Item = i64, Error = Error> {
                         println!("file.write_all failed: {:?}", e);
                         MultipartError::Payload(error::PayloadError::Io(e))
                     })?;
-                    acc += bytes.len() as i64;
+                    // acc += bytes.len() as i64;
                     Ok((file, acc))
                 })
                 .map_err(|e: error::BlockingError<MultipartError>| match e {
@@ -51,7 +52,7 @@ pub fn save_file(field: Field) -> impl Future<Item = i64, Error = Error> {
                     error::BlockingError::Canceled => MultipartError::Incomplete,
                 })
             })
-            .map(|(_, acc)| acc)
+            .map(|(_, acc)| url)
             .map_err(|e| {
                 println!("save_file failed, {:?}", e);
                 error::ErrorInternalServerError(e)
