@@ -1,11 +1,8 @@
-@import '~sanitize.css';
-@import '~sanitize.css/forms.css';
-@import '~sanitize.css/typography.css';
-
 @import "./dependencies.scss";
 @import "./variables.scss";
 
 body {
+  // General configuration
   font-family: $body-font-family;
   font-size: $body-font-size;
   font-weight: $body-font-weight;
@@ -20,9 +17,10 @@ body {
 
   main {
     display: flex;
-    justify-content: center;
+    flex-flow: column;
     margin-bottom: 1rem;
-
+    align-items: center;
+        
     div.main-view {
       max-width: 1440px;
       width: 100%;

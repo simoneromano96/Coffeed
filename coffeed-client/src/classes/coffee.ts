@@ -1,5 +1,5 @@
 import { BACKEND_URL } from "./configuration"
-import { client } from "./graphClient";
+import { client } from "./graphClient"
 
 export class Coffee {
   public details?: string
@@ -13,6 +13,7 @@ export class Coffee {
    */
   constructor(public id: string, public name: string, public price: number, public imageUrl: string) {
     this.imageUrl = `${BACKEND_URL}${imageUrl}`
+    this.details = ""
   }
 
   fetchDetails = async () => {
