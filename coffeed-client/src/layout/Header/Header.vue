@@ -1,9 +1,5 @@
 <template>
   <header>
-    <!-- <img class="menu-button" src="../../assets/images/icons/menu.svg" alt="Menu button" /> -->
-    <span @click="openSidenav()" class="menu-button">
-      <span class="icon-menu"></span>
-    </span>
     <img class="logo" src="../../assets/logo/logov3.svg" alt="Coffeed logo" />
     <nav>
       <ul>
@@ -76,7 +72,8 @@ header {
           text-decoration: none;
           border-bottom: 2px double $white;
 
-          &:hover {
+          &:hover,
+          &.router-link-exact-active {
             background-color: $primary;
             border-bottom: 2px double $tertiary;
           }
@@ -91,9 +88,5 @@ header {
 import { Component, Prop, Vue } from "vue-property-decorator"
 
 @Component
-export default class Header extends Vue {
-  openSidenav() {
-    this.$emit("open-sidenav")
-  }
-}
+export default class Header extends Vue {}
 </script>

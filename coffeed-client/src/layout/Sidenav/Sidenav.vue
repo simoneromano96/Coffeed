@@ -2,8 +2,12 @@
   <div id="mySidenav" class="sidenav">
     <ul class="nav">
       <li class="nav-link">
-          
-        <a href>Home</a>
+        <div class="wrapper">
+          <router-link to="/login">
+            <span class="icon-login icon"></span>
+            <span class="nav-text">Login</span>
+          </router-link>
+        </div>
       </li>
     </ul>
   </div>
@@ -14,90 +18,62 @@
 /* The side navigation menu */
 .sidenav {
   position: fixed;
-  width: 60px;
+  width: $sidenav-base-width;
   top: 0;
   left: 0;
   height: 100vh;
-  z-index: 100;
+  z-index: 2;
   background-color: $black;
   overflow: hidden;
   transition: width 0.3s ease;
-  cursor: pointer;
-  box-shadow: 4px 7px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.3);
   &:hover {
-    width: 15rem;
-  }
-  @media screen and (min-width: 600px) {
-    width: 80px;
+    width: $sidenav-expanded-width;
   }
 
   .nav {
     list-style-type: none;
-    color: white;
+    color: $white;
+    padding-left: 1rem;
+    margin: 0;
     &:first-child {
-      padding-top: 1.5rem;
+      padding-top: 1rem;
     }
 
     .nav-link {
-      padding-bottom: 4rem;
-      width: 15rem;
-      a {
-        position: relative;
-        display: block;
-        top: -35px;
-        padding-left: 25px;
-        padding-right: 15px;
-        transition: all 0.3s ease;
-        margin-left: 25px;
-        margin-right: 10px;
-        text-decoration: none;
-        color: white;
-        font-family: "roboto";
-        font-weight: 100;
-        font-size: 1.35em;
-        &:after {
-          content: "";
-          width: 100%;
-          height: 100%;
-          position: absolute;
-          top: 0;
-          left: 0;
-          border-radius: 2px;
-          background: radial-gradient(circle at 94.02% 88.03%, #54a4ff, transparent 100%);
-          opacity: 0;
-          transition: all 0.5s ease;
-          z-index: -10;
-        }
-      }
-      &:hover a:after {
-        opacity: 1;
-      }
-      svg {
-        width: 26px;
-        height: 26px;
-        position: relative;
-        left: -25px;
-        cursor: pointer;
-        @media screen and(min-width:600px) {
-          width: 32px;
-          height: 32px;
-          left: -15px;
+      padding-bottom: 1rem;
+      width: $sidenav-expanded-width - 1rem;
+
+      .wrapper {
+        a {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          cursor: pointer;
+          text-decoration: none;
+          color: $white;
+          .icon,
+          .nav-text {
+            transition: color 0.5s;
+          }
+          .icon {
+            font-size: 2em;
+            height: 100%;
+          }
+          .nav-text {
+            margin-left: 2rem;
+            height: 100%;
+          }
+          &:hover {
+            .icon,
+            .nav-text {
+              color: $tertiary;
+            }
+          }
         }
       }
     }
   }
-
-  /*
-  .close-button {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    font-size: 1.5rem;
-    cursor: pointer;
-    align-self: flex-start;
-    color: $white;
-  }
-  */
 }
 </style>
 
@@ -105,11 +81,5 @@
 import { Component, Prop, Vue } from "vue-property-decorator"
 
 @Component
-export default class Sidenav extends Vue {
-  @Prop() private isOpen!: boolean
-
-  closeSidenav() {
-    this.$emit("close-sidenav")
-  }
-}
+export default class Sidenav extends Vue {}
 </script>

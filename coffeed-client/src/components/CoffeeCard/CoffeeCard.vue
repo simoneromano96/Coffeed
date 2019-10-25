@@ -6,15 +6,15 @@
       <div class="details">
         <div
           class="opaque"
-          :class="coffee.details === '' ? 'show' : 'hide'"
+          :class="coffee.description === '' ? 'show' : 'hide'"
         >Click to get my details!</div>
         <div class="loading" :class="loadingPercentage < 100 ? 'show' : 'hide'">
           <coffee-loader :id="coffee.id" :loading-percentage="loadingPercentage" :clicked="clicked"></coffee-loader>
         </div>
         <div
           class="animate"
-          :class="coffee.details === '' || loadingPercentage < 100 ? 'hide' : 'show'"
-        >{{coffee.details}}</div>
+          :class="coffee.description === '' || loadingPercentage < 100 ? 'hide' : 'show'"
+        >{{coffee.description}}</div>
       </div>
     </div>
     <span class="price">{{coffee.price}} €</span>

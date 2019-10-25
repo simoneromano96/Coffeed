@@ -1,4 +1,3 @@
-import { BACKEND_URL } from "./configuration"
 import { client } from "./graphClient"
 
 export class Coffee {
@@ -12,7 +11,6 @@ export class Coffee {
    * @param imageUrl Where to retrieve the coffee image
    */
   constructor(public id: string, public name: string, public price: number, public imageUrl: string) {
-    this.imageUrl = `${BACKEND_URL}${imageUrl}`
     this.description = ""
   }
 
