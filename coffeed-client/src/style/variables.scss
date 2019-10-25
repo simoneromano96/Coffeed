@@ -5,6 +5,10 @@ $primary: #704241;
 $secondary: #485665;
 $tertiary: #ee6c4d;
 
+// Sidenav
+$sidenav-base-width: 4rem;
+$sidenav-expanded-width: 15rem;
+
 // Font and text utilities
 // Body paragraphs
 $body-font-family: "Open Sans", sans-serif;
@@ -13,3 +17,10 @@ $body-font-weight: 400;
 // Headers
 $header-font-family: "Roboto", sans-serif;
 $header-font-weight: 500;
+// Fonticons
+$icomoon-font-family: "icomoon" !default;
+$icomoon-font-path: "assets/fonts" !default;
+
+$icon-close: "\e900";
+$icon-menu: "\e901";
+$icon-login: "\e902";

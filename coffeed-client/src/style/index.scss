@@ -1,5 +1,6 @@
 @import "./dependencies.scss";
 @import "./variables.scss";
+@import "./fonticon.scss";
 
 body {
   // General configuration
@@ -10,7 +11,12 @@ body {
   background-color: $white;
   color: $black;
 
-  h1,h2,h3,h4,h5,h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: $header-font-family;
     font-weight: $header-font-weight;
   }
@@ -20,7 +26,7 @@ body {
     flex-flow: column;
     margin-bottom: 1rem;
     align-items: center;
-        
+
     div.main-view {
       max-width: 1440px;
       width: 100%;

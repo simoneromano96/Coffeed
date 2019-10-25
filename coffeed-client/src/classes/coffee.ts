@@ -1,8 +1,7 @@
-import { BACKEND_URL } from "./configuration"
 import { client } from "./graphClient"
 
 export class Coffee {
-  public details?: string
+  public description?: string
 
   /**
    * A representation of a Coffee
@@ -12,23 +11,22 @@ export class Coffee {
    * @param imageUrl Where to retrieve the coffee image
    */
   constructor(public id: string, public name: string, public price: number, public imageUrl: string) {
-    this.imageUrl = `${BACKEND_URL}${imageUrl}`
-    this.details = ""
+    this.description = ""
   }
 
-  fetchDetails = async () => {
-    // Ask for details only once
-    if (!this.details) {
+  fetchDescription = async () => {
+    // Ask for description only once
+    if (!this.description) {
       try {
         const query = `{
           coffee(id: "${this.id}") {
-            details
+            description
           }
         }`
 
-        const res: { coffee: { details: string } } = await client.request(query)
-        const details = res.coffee.details
-        this.details = details && details.length > 0 ? details : "No description available 😥"
+        const res: { coffee: { description: string } } = await client.request(query)
+        const description = res.coffee.description
+        this.description = description && description.length > 0 ? description : "No description available 😥"
       } catch (error) {
         console.log(error)
       }
