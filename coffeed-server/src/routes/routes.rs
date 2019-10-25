@@ -27,7 +27,12 @@ pub fn save_file(field: Field) -> impl Future<Item = String, Error = Error> {
     let splitted: Vec<&str> = filename.split('.').collect(); // [filename, extension]
     let file_extension: &str = splitted.last().unwrap(); // extension
     let uploaded_filename: String = format!("{}.{}", nanoid::simple(), file_extension);
-    let url: String = format!("{}/{}", "/public/uploads", uploaded_filename);
+    let server_address = std::env::var("ADDRESS").unwrap();
+    let server_port = std::env::var("PORT").unwrap_or_else(|_| "80".to_string());
+    let url: String = format!(
+        "{}:{}/{}/{}",
+        server_address, server_port, "/public/uploads", uploaded_filename
+    );
 
     let file_path_string = format!("src/public/uploads/{}", uploaded_filename);
     let file = match fs::File::create(file_path_string) {

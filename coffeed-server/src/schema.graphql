@@ -5,6 +5,11 @@ schema {
 
 scalar DateTimeUtc @juniper(with_time_zone: false)
 
+# enum UserType {
+#   Admin
+#   Customer
+# }
+
 type BaseResponse {
   error: Boolean!
   statusCode: Int!
@@ -20,6 +25,14 @@ type Coffee {
   description: String
 }
 
+type User {
+  id: ID! @juniper(ownership: "owned")
+  username: String!
+  email: String!
+  password: String!
+  userType: String! # TODO: Use enum
+}
+
 input CoffeeInput {
   name: String!
   price: Float!
@@ -33,6 +46,12 @@ input UpdateCoffeeInput {
   price: Float
   imageUrl: String
   description: String
+}
+
+input UserInput {
+  username: String!
+  email: String!
+  password: String!
 }
 
 type Query {

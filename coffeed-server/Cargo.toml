@@ -16,7 +16,7 @@ actix-files = "0.1.6"
 # File upload multipart
 actix-multipart = "0.1.4"
 # GraphQL
-juniper = "0.14.0"
+juniper = "0.14.1"
 # SDL to Juniper
 juniper-from-schema = "0.5.0"
 # Serde for serialisation/deserialisation
@@ -32,3 +32,6 @@ pretty_env_logger = "0.3.1"
 # uuid = { version = "0.8.1", features = ["serde", "v4"] }
 nanoid = "0.2.0"
 chrono = "0.4.9"
+# Password Hash
+argonautica = { version = "0.2", features = ["serde", "simd"] }
+# derive_builder = "0.8.0"
