@@ -1,17 +1,26 @@
 <template>
-    <header>
-        <img src="../../assets/logo/logov3.svg" alt="Coffeed logo">
-            <nav>
+  <header>
+    <img class="logo" src="../../assets/logo/logov3.svg" alt="Coffeed logo" />
+    <nav>
       <ul>
-        <li><router-link to="/">Homepage</router-link></li>
-        <li><router-link to="/about">About</router-link></li>
-        <li><router-link to="/shop">Shop</router-link></li>
-        <li><router-link to="/blog">Blog</router-link></li>
-        <li><router-link to="#">Contact us</router-link></li>
+        <li>
+          <router-link to="/">Homepage</router-link>
+        </li>
+        <li>
+          <router-link to="/about">About</router-link>
+        </li>
+        <li>
+          <router-link to="/shop">Shop</router-link>
+        </li>
+        <li>
+          <router-link to="/blog">Blog</router-link>
+        </li>
+        <li>
+          <router-link to="#">Contact us</router-link>
+        </li>
       </ul>
     </nav>
-
-    </header>
+  </header>
 </template>
 
 <style lang="scss" scoped>
@@ -25,7 +34,16 @@ header {
   height: 100%;
   padding-top: 1rem;
 
-  img {
+  .menu-button {
+    position: absolute;
+    margin-left: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    align-self: flex-start;
+    color: $white;
+  }
+
+  img.logo {
     height: 10rem;
     width: auto;
   }
@@ -54,7 +72,8 @@ header {
           text-decoration: none;
           border-bottom: 2px double $white;
 
-          &:hover {
+          &:hover,
+          &.router-link-exact-active {
             background-color: $primary;
             border-bottom: 2px double $tertiary;
           }

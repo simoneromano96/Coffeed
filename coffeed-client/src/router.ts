@@ -1,8 +1,9 @@
 import Vue from "vue"
 import Router from "vue-router"
 import Homepage from "./pages/Homepage/Homepage.vue"
-import About from "./pages/About/About.vue";
-import Shop from "./pages/Shop/Shop.vue";
+import About from "./pages/About/About.vue"
+import Shop from "./pages/Shop/Shop.vue"
+import Login from "./pages/Login/Login.vue"
 
 Vue.use(Router)
 
@@ -18,12 +19,17 @@ export default new Router({
     {
       path: "/shop",
       name: "shop",
-      component: Shop
+      component: Shop,
     },
     {
       path: "/about",
       name: "about",
-      component: About
-    }
+      component: About,
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login,
+    },
   ],
 })
