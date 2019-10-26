@@ -1,3 +1,6 @@
 [submodule "coffeed-client"]
 	path = coffeed-client
 	url = https://github.com/simoneromano96/Coffeed-client.git
+[submodule "coffeed-server"]
+	path = coffeed-server
+	url = https://github.com/simoneromano96/Coffeed-server.git
